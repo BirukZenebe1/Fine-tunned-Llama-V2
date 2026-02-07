@@ -31,7 +31,13 @@ llama_tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path = 
 llama_tokenizer.pad_token = llama_tokenizer.eos_token
 llama_tokenizer.padding_side = "right"
 
-training_arguments = TrainingArguments(output_dir = "./results", per_device_train_batch_size = 1, max_steps = 100)
+training_arguments = TrainingArguments(output_dir = "./results", 
+                                       per_device_train_batch_size = 1, 
+                                       max_steps = 100
+                                       report_to="wandb",              # Enable wandb logging
+                                       run_name="medical-llama2-finetuning",  # Custom run name
+                                       logging_steps=10,                # Log every 10 steps
+                                       logging_first_step=True,)
 llama_sft_trainer = SFTTrainer(model = llama_model,
                                args = training_arguments,
                                train_dataset = load_dataset(path = "aboonaji/wiki_medical_terms_llam2_format", split = "train"),
