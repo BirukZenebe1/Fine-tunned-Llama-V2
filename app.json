@@ -1,0 +1,20 @@
+{
+  "name": "MEDChat AI",
+  "description": "Medical Q&A chatbot powered by fine-tuned Llama 2",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "env": {
+    "GRADIO_SERVER_NAME": {
+      "value": "0.0.0.0"
+    }
+  }
+}

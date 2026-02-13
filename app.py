@@ -41,8 +41,8 @@ def parse_args():
     parser.add_argument(
         "--port",
         type=int,
-        default=7860,
-        help="Port to serve the application on",
+        default=int(os.environ.get("PORT", 7860)),
+        help="Port to serve the application on (also reads PORT env var)",
     )
     parser.add_argument(
         "--share",
@@ -328,6 +328,7 @@ def main():
 
     demo = create_ui()
     demo.launch(
+        server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
         server_port=args.port,
         share=args.share,
     )

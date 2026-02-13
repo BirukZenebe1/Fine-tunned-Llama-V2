@@ -6,3 +6,10 @@ data/
 *.ipynb
 copy_of_llm.py
 .env
+train.py
+requirements.txt
+docker-compose.yml
+render.yaml
+app.json
+Procfile
+README.md
