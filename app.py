@@ -4,7 +4,8 @@ MEDChat AI - Medical Chatbot Application
 A Gradio-based web application powered by a fine-tuned Llama 2 model
 for medical question-answering with:
 - Conversation memory (multi-turn context)
-- Persistent user authentication (bcrypt + JSON)
+- Persistent user authentication (bcrypt hashing)
+- MongoDB persistence (set MONGO_URI env var) with JSON file fallback
 - Configurable model loading (local checkpoint or HuggingFace Hub)
 """
 
@@ -213,7 +214,7 @@ def create_ui():
                     "- Conversational memory (remembers your chat history)\n"
                     "- Secure authentication with encrypted passwords\n"
                     "- Medical domain knowledge via fine-tuned LLM\n"
-                    "- Privacy-focused with local data storage"
+                    "- Persistent storage via MongoDB (or local files)"
                 )
                 gr.Markdown("---")
                 gr.Markdown(

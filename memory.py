@@ -2,8 +2,11 @@
 Conversation memory module for the medical chatbot.
 
 Maintains per-session chat history so the model receives prior context
-when generating responses. History is stored in-memory (per server session)
-and optionally persisted to disk per user.
+when generating responses.
+
+Storage backend:
+- MongoDB when MONGO_URI env var is set (recommended for deployment)
+- Local JSON files (data/history/<user>.json) as fallback
 """
 
 import json
@@ -12,6 +15,29 @@ from collections import defaultdict
 
 HISTORY_DIR = os.path.join(os.path.dirname(__file__), "data", "history")
 MAX_HISTORY_TURNS = 10  # Keep last N turns to fit within context window
+
+# ---------------------------------------------------------------------------
+# MongoDB helpers
+# ---------------------------------------------------------------------------
+_mongo_collection = None
+
+
+def _get_mongo_collection():
+    global _mongo_collection
+    if _mongo_collection is not None:
+        return _mongo_collection
+
+    mongo_uri = os.environ.get("MONGO_URI")
+    if not mongo_uri:
+        return None
+
+    from pymongo import MongoClient
+
+    client = MongoClient(mongo_uri)
+    db = client.get_default_database()
+    _mongo_collection = db["conversations"]
+    _mongo_collection.create_index("username", unique=True)
+    return _mongo_collection
 
 
 class ConversationMemory:
@@ -22,27 +48,65 @@ class ConversationMemory:
         # {username: [{"role": "user"/"assistant", "content": "..."}]}
         self._sessions = defaultdict(list)
 
+    # -------------------------------------------------------------------
+    # JSON file backend (fallback)
+    # -------------------------------------------------------------------
     def _history_path(self, username):
         os.makedirs(HISTORY_DIR, exist_ok=True)
         return os.path.join(HISTORY_DIR, f"{username}.json")
 
-    def load_history(self, username):
-        """Load conversation history from disk for a user."""
-        if not self.persist:
-            return
+    def _load_from_file(self, username):
         path = self._history_path(username)
         if os.path.exists(path):
             with open(path, "r") as f:
                 self._sessions[username] = json.load(f)
 
-    def save_history(self, username):
-        """Persist conversation history to disk for a user."""
-        if not self.persist:
-            return
+    def _save_to_file(self, username):
         path = self._history_path(username)
         with open(path, "w") as f:
             json.dump(self._sessions[username], f, indent=2)
 
+    # -------------------------------------------------------------------
+    # MongoDB backend
+    # -------------------------------------------------------------------
+    def _load_from_mongo(self, username):
+        col = _get_mongo_collection()
+        doc = col.find_one({"username": username})
+        if doc:
+            self._sessions[username] = doc.get("history", [])
+
+    def _save_to_mongo(self, username):
+        col = _get_mongo_collection()
+        col.update_one(
+            {"username": username},
+            {"$set": {"history": self._sessions[username]}},
+            upsert=True,
+        )
+
+    # -------------------------------------------------------------------
+    # Unified load / save
+    # -------------------------------------------------------------------
+    def load_history(self, username):
+        """Load conversation history for a user."""
+        if not self.persist:
+            return
+        if _get_mongo_collection() is not None:
+            self._load_from_mongo(username)
+        else:
+            self._load_from_file(username)
+
+    def save_history(self, username):
+        """Persist conversation history for a user."""
+        if not self.persist:
+            return
+        if _get_mongo_collection() is not None:
+            self._save_to_mongo(username)
+        else:
+            self._save_to_file(username)
+
+    # -------------------------------------------------------------------
+    # Core API
+    # -------------------------------------------------------------------
     def add_turn(self, username, user_msg, assistant_msg):
         """Add a user/assistant exchange to the conversation history."""
         self._sessions[username].append({"role": "user", "content": user_msg})
