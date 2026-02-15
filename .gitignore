@@ -1,28 +1,28 @@
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
 *.egg-info/
 dist/
 build/
+.eggs/
+*.egg
 
-# Model outputs
-results/
-
-# User data (contains passwords and chat history)
-data/
-
-# Environment
 .env
 .venv/
 venv/
+env/
 
-# IDE
-.vscode/
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+*.log
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# OS
 .DS_Store
 Thumbs.db
-
-# Weights & Biases
-wandb/

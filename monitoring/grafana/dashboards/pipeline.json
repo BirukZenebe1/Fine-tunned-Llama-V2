@@ -1,0 +1,43 @@
+{
+  "dashboard": {
+    "title": "Analytics Pipeline Overview",
+    "uid": "analytics-pipeline",
+    "timezone": "browser",
+    "refresh": "10s",
+    "panels": [
+      {
+        "title": "WebSocket Connections",
+        "type": "stat",
+        "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+        "targets": [
+          {
+            "expr": "websocket_connections_active",
+            "legendFormat": "Active"
+          }
+        ]
+      },
+      {
+        "title": "Redis Circuit Breaker",
+        "type": "stat",
+        "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+        "targets": [
+          {
+            "expr": "redis_circuit_breaker_state",
+            "legendFormat": "State"
+          }
+        ]
+      },
+      {
+        "title": "API Uptime",
+        "type": "stat",
+        "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+        "targets": [
+          {
+            "expr": "api_uptime_seconds",
+            "legendFormat": "Uptime (s)"
+          }
+        ]
+      }
+    ]
+  }
+}
