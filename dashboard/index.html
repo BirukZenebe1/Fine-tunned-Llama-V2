@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Analytics Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ─── Header ──────────────────────────────────────────────── -->
+    <header>
+        <h1>Real-Time Analytics Dashboard</h1>
+        <div class="header-right">
+            <div class="connection-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ─── KPI Bar ─────────────────────────────────────────────── -->
+    <div class="kpi-bar">
+        <div class="kpi">
+            <span class="kpi-label">Messages / sec</span>
+            <span class="kpi-value" id="throughput">--</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-label">Active Sensors</span>
+            <span class="kpi-value" id="sensor-count">--</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-label">Anomalies</span>
+            <span class="kpi-value" id="anomaly-count" style="color: var(--accent-amber)">0</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-label">Pipeline Uptime</span>
+            <span class="kpi-value" id="uptime" style="font-size: 1rem">--</span>
+        </div>
+    </div>
+
+    <!-- ─── Dashboard Grid ──────────────────────────────────────── -->
+    <main class="dashboard-grid">
+
+        <!-- Row 1: IoT Sensor Charts -->
+        <section class="card">
+            <h2>
+                Temperature
+                <span class="trend-indicator trend-stable" id="trend-temperature"></span>
+            </h2>
+            <div class="chart-container">
+                <canvas id="temperature-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>
+                Humidity
+                <span class="trend-indicator trend-stable" id="trend-humidity"></span>
+            </h2>
+            <div class="chart-container">
+                <canvas id="humidity-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>
+                Pressure
+                <span class="trend-indicator trend-stable" id="trend-pressure"></span>
+            </h2>
+            <div class="chart-container">
+                <canvas id="pressure-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Row 2: Gauges -->
+        <section class="card">
+            <h2>Current Readings</h2>
+            <div class="gauge-grid">
+                <div class="gauge-item">
+                    <div class="gauge-label">Temperature</div>
+                    <div class="gauge-value" id="temp-value" style="color: var(--accent-blue)">--</div>
+                    <div class="gauge-unit">&deg;C</div>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-label">Humidity</div>
+                    <div class="gauge-value" id="humidity-value" style="color: var(--accent-purple)">--</div>
+                    <div class="gauge-unit">%</div>
+                </div>
+                <div class="gauge-item">
+                    <div class="gauge-label">Pressure</div>
+                    <div class="gauge-value" id="pressure-value" style="color: var(--accent-amber)">--</div>
+                    <div class="gauge-unit">hPa</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 2: Activity Chart -->
+        <section class="card wide">
+            <h2>User Activity</h2>
+            <div class="chart-container">
+                <canvas id="activity-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Row 3: Anomaly Alerts -->
+        <section class="card wide">
+            <h2>Anomaly Alerts</h2>
+            <div class="alerts-container" id="alerts-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">&#9888;</div>
+                    <div>No anomalies detected yet</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Row 3: Leaderboard -->
+        <section class="card">
+            <h2>Top Pages (Purchases)</h2>
+            <div id="leaderboard" class="alerts-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">&#127942;</div>
+                    <div>Waiting for purchase data</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ─── Footer ──────────────────────────────────────────────── -->
+    <footer>
+        <span>Streaming Pipeline v1.0</span>
+        <span>WS Latency: <span id="ws-latency">--</span>ms</span>
+    </footer>
+
+    <!-- ─── Scripts ─────────────────────────────────────────────── -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
